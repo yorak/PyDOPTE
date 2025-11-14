@@ -207,7 +207,45 @@ The software is provided "as is" primarily for:
 
 ## Citation
 
-If you use PyDOPTE in your research, please cite appropriately.
+If you use PyDOPTE in your research, please consider citing one of the following publications where this framework was used:
+
+```bibtex
+@article{rasku2019automatic,
+  title={On automatic algorithm configuration of vehicle routing problem solvers},
+  author={Rasku, Jussi and Musliu, Nysret and K{\"a}rkk{\"a}inen, Tommi},
+  journal={Journal on Vehicle Routing Algorithms},
+  volume={2},
+  number={1},
+  pages={1--22},
+  year={2019}
+}
+
+@inproceedings{rasku2015automatic,
+  title={Automatic customization framework for efficient vehicle routing system deployment},
+  author={Rasku, Jussi and Puranen, Teemu and Kalmbach, Anssi and K{\"a}rkk{\"a}inen, Tommi},
+  booktitle={European Congress on Computational Methods in Applied Sciences and Engineering},
+  pages={105--120},
+  year={2015},
+  publisher={Springer International Publishing}
+}
+
+@incollection{rasku2014automating,
+  title={Automating the parameter selection in VRP: an off-line parameter tuning tool comparison},
+  author={Rasku, Jussi and Musliu, Nysret and K{\"a}rkk{\"a}inen, Tommi},
+  booktitle={Modeling, Simulation and Optimization for Science and Technology},
+  pages={191--209},
+  year={2014},
+  publisher={Springer Netherlands}
+}
+```
+
+**Publications:**
+
+- Rasku, J., Musliu, N., & Kärkkäinen, T. (2019). On automatic algorithm configuration of vehicle routing problem solvers. *Journal on Vehicle Routing Algorithms*, 2(1), 1-22.
+
+- Rasku, J., Puranen, T., Kalmbach, A., & Kärkkäinen, T. (2015). Automatic customization framework for efficient vehicle routing system deployment. In *European Congress on Computational Methods in Applied Sciences and Engineering* (pp. 105-120). Cham: Springer International Publishing.
+
+- Rasku, J., Musliu, N., & Kärkkäinen, T. (2014). Automating the parameter selection in VRP: an off-line parameter tuning tool comparison. In *Modeling, Simulation and Optimization for Science and Technology* (pp. 191-209). Dordrecht: Springer Netherlands.
 
 ## Contributing
 
