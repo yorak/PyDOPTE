@@ -2,11 +2,34 @@
 
 **Python Design of Parameter Tuning Experiments**
 
-PyDOPTE is a Python library and framework for designing and conducting parameter tuning experiments for optimization algorithms. It provides a unified interface for multiple state-of-the-art parameter tuning methods and supports both internal (Python-based) and external (executable-based) algorithms.
+## ⚠️ IMPORTANT NOTICE ⚠️
+
+**This project has not been actively maintained since 2018.** The included configurator tool versions (SMAC, ParamILS, IRace, etc.) are seriously outdated. While the framework itself may still be useful for understanding automatic algorithm configuration concepts or for educational purposes, users should be aware that:
+
+- Python 2.x is no longer supported (EOL January 2020)
+- External configurator tools have had major updates and improvements since 2018
+- Modern alternatives and updated versions of these tools are available elsewhere
+- Dependencies and external tools may no longer work as expected on modern systems
+
+**For production use, please consider modern alternatives such as:**
+- [SMAC3](https://github.com/automl/SMAC3) - Latest version of SMAC
+- [irace](https://cran.r-project.org/web/packages/irace/) - Updated IRace package
+- [Optuna](https://optuna.org/) - Modern hyperparameter optimization framework
+- [HpBandSter](https://github.com/automl/HpBandSter) - Hyperparameter optimization with Bayesian approaches
+
+---
+
+## About
+
+PyDOPTE is a Python library and framework for **automatic algorithm configuration** (also known as **parameter tuning** or **hyperparameter optimization**). It provides a unified interface for multiple state-of-the-art configuration methods and supports both internal (Python-based) and external (executable-based) algorithms.
+
+**For Evolutionary Computing Researchers:** PyDOPTE offers a framework for parameter tuning of evolutionary algorithms and metaheuristics, with support for instance-based training and validation.
+
+**For Operations Research & Optimization Practitioners:** PyDOPTE provides tools for automatic algorithm configuration (AAC) of optimization solvers, supporting the experimental design and comparison of different configurators on your problem instances.
 
 ## Features
 
-- **Multiple Tuning Methods**: Support for various parameter tuning algorithms including:
+- **Multiple Configuration Methods**: Support for various automatic algorithm configurators (AAC) / parameter tuning algorithms including:
   - CMA-ES (Covariance Matrix Adaptation Evolution Strategy)
   - GGA (Gender-based Genetic Algorithm)
   - IRace (Iterated Racing)
@@ -16,9 +39,9 @@ PyDOPTE is a Python library and framework for designing and conducting parameter
   - Random Search
   - Default parameter baseline
 
-- **Flexible Algorithm Integration**: Tune both internal Python algorithms and external executables
-- **Instance-based Tuning**: Support for tuning on multiple problem instances
-- **Extensible Architecture**: Easy to add new tuning methods and algorithms
+- **Flexible Algorithm Integration**: Configure/tune both internal Python algorithms and external executables
+- **Instance-based Configuration**: Support for training on multiple problem instances with separate validation sets
+- **Extensible Architecture**: Easy to add new configurators and target algorithms
 - **Experiment Management**: Built-in tools for running batch experiments and managing results
 
 ## Installation
@@ -46,35 +69,36 @@ For permanent setup, add the above line to your `~/.bashrc` or `~/.bash_profile`
 
 ## Quick Start
 
-Here's a simple example of tuning an algorithm with PyDOPTE:
+Here's a simple example of configuring/tuning an algorithm with PyDOPTE:
 
 ```python
 import pydopte
 from pydopte.Tuners.RandomTuner import RandomTuner
 from pydopte import PathManager
 
-# Initialize your algorithm (example with external algorithm)
+# Initialize your target algorithm (the algorithm to be configured)
+# This could be an evolutionary algorithm, metaheuristic, or optimization solver
 algorithm = YourAlgorithm()
 algorithm.SetTimeLimit(5.0)
 
-# Set up the tuner
+# Set up the configurator/tuner
 tuner = RandomTuner()
 tunerParameters = tuner.GetDefinition().NewDefaultParameterSet()
-tunerParameters["-eb"] = 1000  # Evaluation budget
+tunerParameters["-eb"] = 1000  # Evaluation budget (number of configurations to try)
 
-# Define training instances
+# Define training instances (problem instances for algorithm configuration)
 instances = ["instance1.dat", "instance2.dat", "instance3.dat"]
 
-# Configure tuning task
+# Configure the configuration task
 tuner.SetAlgorithm(algorithm)
 tuner.SetInstances(instances)
 
-# Run tuning
+# Run the configuration/tuning process
 result = tuner.Tune(tunerParameters)
 
 print("Quality:", result["obj"])
 print("Evaluations:", result["ops"])
-print("Tuned parameters:", result["special"])
+print("Configured/tuned parameters:", result["special"])
 ```
 
 ## Project Structure
@@ -104,22 +128,22 @@ PyDOPTE/
 
 ```
 
-## Available Tuners
+## Available Configurators / Tuners
 
-| Tuner | Description | Best For |
-|-------|-------------|----------|
-| **CMAESTuner** | Evolution strategy with covariance matrix adaptation | Continuous parameters |
-| **GGATuner** | Gender-based genetic algorithm | Mixed parameter types |
-| **IRaceTuner** | Iteratively races configurations | Large parameter spaces |
-| **ParamILSTuner** | Iterative local search for parameters | Categorical parameters |
-| **REVACTuner** | Relevance estimation and value calibration | Complex landscapes |
-| **SMACTuner** | Sequential model-based configuration | Expensive evaluations |
-| **RandomTuner** | Random search baseline | Baseline comparison |
-| **DefaultTuner** | Uses default parameters | Baseline comparison |
+| Configurator | Description | Best For |
+|--------------|-------------|----------|
+| **CMAESTuner** | Evolution strategy with covariance matrix adaptation | Continuous parameters, numerical optimization |
+| **GGATuner** | Gender-based genetic algorithm | Mixed parameter types, general purpose |
+| **IRaceTuner** | Iteratively races configurations | Large parameter spaces, expensive evaluations |
+| **ParamILSTuner** | Iterative local search for parameters | Categorical/discrete parameters |
+| **REVACTuner** | Relevance estimation and value calibration | Complex response surfaces |
+| **SMACTuner** | Sequential model-based algorithm configuration | Expensive evaluations, mixed parameter types |
+| **RandomTuner** | Random search baseline | Baseline comparison, quick exploration |
+| **DefaultTuner** | Uses default parameters only | Baseline comparison |
 
-## Creating Custom Algorithms
+## Creating Custom Target Algorithms
 
-To tune your own algorithm, inherit from `BaseAlgorithm`:
+To configure/tune your own algorithm (e.g., your evolutionary algorithm, metaheuristic, or optimization solver), inherit from `BaseAlgorithm`:
 
 ```python
 from pydopte.BaseAlgorithm import BaseAlgorithm
@@ -128,13 +152,14 @@ from pydopte.ParameterSet import ParameterSetDefinition
 class MyAlgorithm(BaseAlgorithm):
     def __init__(self):
         BaseAlgorithm.__init__(self)
-        # Define your parameters
+        # Define your algorithm's configurable parameters
         self._definition = ParameterSetDefinition()
-        # Add parameters here
+        # Add parameters here (continuous, discrete, categorical, etc.)
 
     def Evaluate(self, parameterSet):
-        # Implement your algorithm evaluation
-        # Return dict with "obj", "time", "ops" keys
+        # Implement your algorithm evaluation on a problem instance
+        # parameterSet is a dictionary of parameter values to test
+        # Return dict with "obj" (solution quality), "time" (runtime), "ops" (evaluations)
         return {"obj": objective_value, "time": runtime, "ops": evaluations}
 ```
 
@@ -171,7 +196,14 @@ See [LICENSE](LICENSE) for full details.
 
 ## Author's Note
 
-This was originally developed for personal research use and represents an early Python project by the author. As such, it may not follow all modern Python conventions and best practices. The software is provided "as is" for anyone who might find it useful.
+This was originally developed in 2011-2018 for personal research use and represents an early Python project by the author. As such, it may not follow all modern Python conventions and best practices. **This code has not been maintained since 2018**, and the integrated external configurator tools are seriously outdated.
+
+The software is provided "as is" primarily for:
+- Educational purposes and understanding automatic algorithm configuration concepts
+- Historical reference for research reproducibility
+- Anyone who might find the framework architecture useful
+
+**For current research or production use, please use modern alternatives** mentioned in the notice at the top of this README.
 
 ## Citation
 
